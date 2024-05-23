@@ -1,0 +1,14 @@
+psql -U postgres -d postgres -h localhost //too enter postgres 
+
+postgres=# ***** // here we write our password 
+
+CREATE DATABASE Golang11;
+
+CREATE TABLE students(id serial primary key,name varchar, age int,rating int);
+
+\d to check  if I created table or not
+insert into students(name, age, rating) values('Jahongir', 19, 99); it add information too table students I wrote just 1 information but I added 10 information on my local table 
+
+select * from students; shows all information that have in table students 
+
+shu men ishlatgan barcha kodlar table yaratib unga malumot qoshishda ishlatganlarim
