@@ -1,0 +1,43 @@
+CREATE TABLE car (
+    id SERIAL PRIMARY KEY,
+    make VARCHAR(100),
+    model VARCHAR(100)
+);
+
+CREATE TABLE "user" (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100),
+    email VARCHAR(100)
+);
+
+CREATE TABLE car_user (
+    car_id INT REFERENCES car(id),
+    user_id INT REFERENCES "user"(id),
+    PRIMARY KEY (car_id, user_id)
+);
+
+
+
+
+car:
+id | make    | model
+---|---------|--------
+1  | Toyota  | Corolla
+2  | Honda   | Civic
+3  | Ford    | Focus
+
+"user":
+id | username | email
+---|----------|---------------------
+1  | John     | john@gmail.com
+2  | Alice    | alice@gmail.com
+3  | Bob      | bob@gmail.com
+
+car_user:
+car_id | user_id
+-------|--------
+1      | 1
+1      | 2
+2      | 2
+3      | 3
+
