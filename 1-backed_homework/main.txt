@@ -1,0 +1,19 @@
+git branch feature-branch
+
+git checkout feature-branch
+
+git add .
+
+git commit -m "Made some changes in feature-branch"
+git checkout main
+
+git merge feature-branch
+
+git checkout main
+git merge feature-branch
+
+
+git add example.txt
+
+git commit -m "Resolved merge conflict between main and feature-branch"
+

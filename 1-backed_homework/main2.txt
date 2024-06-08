@@ -1,0 +1,54 @@
+git branch feature-1
+git branch feature-2
+git checkout feature-1
+
+echo "Change in feature-1" >> example.txt
+
+git checkout feature-2
+
+git checkout feature-1
+git add .
+git commit -m "Made changes in feature-1"
+
+git checkout feature-2
+git add .
+git commit -m "Made changes in feature-2"
+git checkout main
+
+git merge feature-1
+
+git merge feature-2
+
+git branch -d feature-1
+
+git branch -d feature-2
+1. Create two new branches named `feature-1` and `feature-2`:
+
+git branch feature-1
+git branch feature-2
+
+git checkout feature-1
+
+git checkout feature-2
+
+echo "Change in feature-2" >> example.txt
+
+git checkout feature-1
+git add .
+git commit -m "Made changes in feature-1"
+
+git checkout feature-2
+git add .
+git commit -m "Made changes in feature-2"
+
+git checkout main
+
+git merge feature-1
+
+git merge feature-2
+
+git branch -d feature-1
+
+git branch -d feature-2
+
+git log
