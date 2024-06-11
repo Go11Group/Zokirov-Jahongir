@@ -1,71 +1,69 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
-	"myproject/models"
+	"myproject2/models"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func GetSolvedProblems(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(models.SolvedProblems)
+func GetSolvedProblems(c *gin.Context) {
+	c.JSON(http.StatusOK, models.SolvedProblems)
 }
 
-func GetSolvedProblem(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func GetSolvedProblem(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for _, item := range models.SolvedProblems {
 		if item.ID == id {
-			json.NewEncoder(w).Encode(item)
+			c.JSON(http.StatusOK, item)
 			return
 		}
 	}
-	http.Error(w, "Solved problem not found", http.StatusNotFound)
+	c.JSON(http.StatusNotFound, gin.H{"error": "Solved problem not found"})
 }
 
-func CreateSolvedProblem(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func CreateSolvedProblem(c *gin.Context) {
 	var solvedProblem models.SolvedProblem
-	json.NewDecoder(r.Body).Decode(&solvedProblem)
+	if err := c.BindJSON(&solvedProblem); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	solvedProblem.ID = len(models.SolvedProblems) + 1
 	models.SolvedProblems = append(models.SolvedProblems, solvedProblem)
-	json.NewEncoder(w).Encode(solvedProblem)
+	c.JSON(http.StatusCreated, solvedProblem)
 }
 
-func UpdateSolvedProblem(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func UpdateSolvedProblem(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for index, item := range models.SolvedProblems {
 		if item.ID == id {
 			var solvedProblem models.SolvedProblem
-			json.NewDecoder(r.Body).Decode(&solvedProblem)
+			if err := c.BindJSON(&solvedProblem); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
 			solvedProblem.ID = id
 			models.SolvedProblems[index] = solvedProblem
-			json.NewEncoder(w).Encode(solvedProblem)
+			c.JSON(http.StatusOK, solvedProblem)
 			return
 		}
 	}
-	http.Error(w, "Solved problem not found", http.StatusNotFound)
+	c.JSON(http.StatusNotFound, gin.H{"error": "Solved problem not found"})
 }
 
-func DeleteSolvedProblem(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func DeleteSolvedProblem(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for index, item := range models.SolvedProblems {
 		if item.ID == id {
 			models.SolvedProblems = append(models.SolvedProblems[:index], models.SolvedProblems[index+1:]...)
-			break
+			c.JSON(http.StatusOK, models.SolvedProblems)
+			return
 		}
 	}
-	json.NewEncoder(w).Encode(models.SolvedProblems)
+	c.JSON(http.StatusNotFound, gin.H{"error": "Solved problem not found"})
 }

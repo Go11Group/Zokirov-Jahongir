@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"myproject/handlers"
-	"myproject/models"
+	"myproject2/handlers"
+	"myproject2/models"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -16,33 +16,33 @@ func main() {
 		{ID: 2, Title: "Reverse String", Description: "Reverse the given string.", Difficulty: "Easy"},
 	}
 	models.Users = []models.User{
-		{ID: 1, Username: "johndoe", Email: "johndoe@example.com"},
-		{ID: 2, Username: "janedoe", Email: "janedoe@example.com"},
+		{ID: 1, Username: "johndoe", Email: "johndoe@gmail.com"},
+		{ID: 2, Username: "janedoe", Email: "janedoe@gmail.com"},
 	}
 	models.SolvedProblems = []models.SolvedProblem{
 		{ID: 1, UserID: 1, ProblemID: 1},
 		{ID: 2, UserID: 2, ProblemID: 2},
 	}
 
-	r := mux.NewRouter()
+	r := gin.Default()
 
-	r.HandleFunc("/problems", handlers.GetProblems).Methods("GET")
-	r.HandleFunc("/problems/{id}", handlers.GetProblem).Methods("GET")
-	r.HandleFunc("/problems", handlers.CreateProblem).Methods("POST")
-	r.HandleFunc("/problems/{id}", handlers.UpdateProblem).Methods("PUT")
-	r.HandleFunc("/problems/{id}", handlers.DeleteProblem).Methods("DELETE")
+	r.GET("/problems", handlers.GetProblems)
+	r.GET("/problems/:id", handlers.GetProblem)
+	r.POST("/problems", handlers.CreateProblem)
+	r.PUT("/problems/:id", handlers.UpdateProblem)
+	r.DELETE("/problems/:id", handlers.DeleteProblem)
 
-	r.HandleFunc("/users", handlers.GetUsers).Methods("GET")
-	r.HandleFunc("/users/{id}", handlers.GetUser).Methods("GET")
-	r.HandleFunc("/users", handlers.CreateUser).Methods("POST")
-	r.HandleFunc("/users/{id}", handlers.UpdateUser).Methods("PUT")
-	r.HandleFunc("/users/{id}", handlers.DeleteUser).Methods("DELETE")
+	r.GET("/users", handlers.GetUsers)
+	r.GET("/users/:id", handlers.GetUser)
+	r.POST("/users", handlers.CreateUser)
+	r.PUT("/users/:id", handlers.UpdateUser)
+	r.DELETE("/users/:id", handlers.DeleteUser)
 
-	r.HandleFunc("/solved_problems", handlers.GetSolvedProblems).Methods("GET")
-	r.HandleFunc("/solved_problems/{id}", handlers.GetSolvedProblem).Methods("GET")
-	r.HandleFunc("/solved_problems", handlers.CreateSolvedProblem).Methods("POST")
-	r.HandleFunc("/solved_problems/{id}", handlers.UpdateSolvedProblem).Methods("PUT")
-	r.HandleFunc("/solved_problems/{id}", handlers.DeleteSolvedProblem).Methods("DELETE")
+	r.GET("/solved_problems", handlers.GetSolvedProblems)
+	r.GET("/solved_problems/:id", handlers.GetSolvedProblem)
+	r.POST("/solved_problems", handlers.CreateSolvedProblem)
+	r.PUT("/solved_problems/:id", handlers.UpdateSolvedProblem)
+	r.DELETE("/solved_problems/:id", handlers.DeleteSolvedProblem)
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }

@@ -1,71 +1,69 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
-	"myproject/models"
+	"myproject2/models"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(models.Users)
+func GetUsers(c *gin.Context) {
+	c.JSON(http.StatusOK, models.Users)
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func GetUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for _, item := range models.Users {
 		if item.ID == id {
-			json.NewEncoder(w).Encode(item)
+			c.JSON(http.StatusOK, item)
 			return
 		}
 	}
-	http.Error(w, "User not found", http.StatusNotFound)
+	c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func CreateUser(c *gin.Context) {
 	var user models.User
-	json.NewDecoder(r.Body).Decode(&user)
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	user.ID = len(models.Users) + 1
 	models.Users = append(models.Users, user)
-	json.NewEncoder(w).Encode(user)
+	c.JSON(http.StatusCreated, user)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func UpdateUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for index, item := range models.Users {
 		if item.ID == id {
 			var user models.User
-			json.NewDecoder(r.Body).Decode(&user)
+			if err := c.BindJSON(&user); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
 			user.ID = id
 			models.Users[index] = user
-			json.NewEncoder(w).Encode(user)
+			c.JSON(http.StatusOK, user)
 			return
 		}
 	}
-	http.Error(w, "User not found", http.StatusNotFound)
+	c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+func DeleteUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	for index, item := range models.Users {
 		if item.ID == id {
 			models.Users = append(models.Users[:index], models.Users[index+1:]...)
-			break
+			c.JSON(http.StatusOK, models.Users)
+			return
 		}
 	}
-	json.NewEncoder(w).Encode(models.Users)
+	c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 }
